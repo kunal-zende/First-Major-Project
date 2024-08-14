@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
 const path = require("path")
 
+//to access  body in post request 
+app.use(express.urlencoded({ extended: true}));
+
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
 main()
@@ -23,9 +26,30 @@ app.get("/", (req, res) => {
     res.send("Hi I'm root");
 });
 
+//Index route
 app.get("/listing", async (req, res) => {
     const allListings = await Listing.find({});
     res.render("listings/index.ejs", {allListings});
+});
+
+//New route
+app.get("/listings/new", (req, res) => {
+    res.render("listings/create.ejs");
+});
+
+//Show route
+app.get("/listings/:id", async (req, res) => {
+    let {id} = req.params;
+    console.log(id);
+    let listing = await Listing.findById(id);
+    res.render("listings/show.ejs", {listing});
+});
+
+app.post("/listing", async (req, res) => {
+    const newListing = new Listing( req.body.listing);
+    console.log(newListing);
+    await newListing.save();
+    res.redirect("/listing")
 })
 
 app.get("/testListing", async (req, res) => {
@@ -40,6 +64,7 @@ app.get("/testListing", async (req, res) => {
     //      console.log("Sample was saved");
     //      res.send("Successful testing");
 });
+
 
 app.listen(8080, () => {
     console.log("Server is listing on port 8080");
