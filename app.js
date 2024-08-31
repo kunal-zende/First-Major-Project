@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
 const path = require("path")
+const ejsMate = require('ejs-mate')  //to create boilerplate and templates
 
 //override - put
 const methodOverride = require("method-override");
@@ -25,6 +26,12 @@ app.use(methodOverride("_method"));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+app.engine('ejs', ejsMate);
+
+app.use(express.static(path.join(__dirname,"/public")));  //to use statio files like css
+
+
 
 app.get("/", (req, res) => {
     res.send("Hi I'm root");
